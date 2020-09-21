@@ -39,7 +39,9 @@ public class ProgramCustomRepositoryImpl extends QuerydslRepositorySupport imple
                                 p.getName(),
                                 p.getIntroduction(),
                                 p.getIntroductionDetail(),
-                                p.getRegion()
+                                p.getRegion(),
+                                p.getThemes()//추가
+
                         )
                 ).collect(Collectors.toList());
         return PageableExecutionUtils.getPage(collect, pageable, query::fetchCount);
