@@ -35,15 +35,13 @@ public class ProgramCustomRepositoryImpl extends QuerydslRepositorySupport imple
 
         List<ProgramViewDto> collect = query.fetch().stream()
                 .map(p -> new ProgramViewDto(
-                                p.getId(),
-                                p.getName(),
-                                p.getIntroduction(),
-                                p.getIntroductionDetail(),
-                                p.getRegion(),
-                                p.getThemes()//추가
-
-                        )
-                ).collect(Collectors.toList());
+                        p.getId(),
+                        p.getName(),
+                        p.getIntroduction(),
+                        p.getIntroductionDetail(),
+                        p.getRegion(),
+                        p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", "))))
+                .collect(Collectors.toList());
         return PageableExecutionUtils.getPage(collect, pageable, query::fetchCount);
     }
 }

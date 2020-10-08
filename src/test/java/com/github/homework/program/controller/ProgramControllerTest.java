@@ -42,6 +42,7 @@ public class ProgramControllerTest extends BaseControllerTest {
             .andExpect(jsonPath("introduction").value("여수시 일대 게장백반, 돌산갓김치등"))
             .andExpect(jsonPath("introductionDetail").value("여행자와 현지인이 꼽은 최고의 먹거리 여행지' 에서 대한민국 229개 지방자치단체 중 여수시가 1위에 선정되어 식도락 여행에 최적화된 프로그램"))
             .andExpect(jsonPath("region").value("전라남도 여수시"))
+            .andExpect(jsonPath("themeName").value("식도락여행"))
             .andDo(write.document(
                 pathParameters(
                     parameterWithName("id").description("id")
@@ -67,6 +68,7 @@ public class ProgramControllerTest extends BaseControllerTest {
             .andExpect(jsonPath("$..introduction").value("여수시 일대 게장백반, 돌산갓김치등"))
             .andExpect(jsonPath("$..introductionDetail").value("여행자와 현지인이 꼽은 최고의 먹거리 여행지' 에서 대한민국 229개 지방자치단체 중 여수시가 1위에 선정되어 식도락 여행에 최적화된 프로그램"))
             .andExpect(jsonPath("$..region").value("전라남도 여수시"))
+            .andExpect(jsonPath("$..themeName").value("즐거운여행, 식도락여행"))
             .andExpect(jsonPath("totalPages").value("1"))
             .andExpect(jsonPath("totalElements").value("1"));
     }
@@ -162,11 +164,28 @@ public class ProgramControllerTest extends BaseControllerTest {
             .introduction("여수시 일대 게장백반, 돌산갓김치등")
             .introductionDetail(
                 "여행자와 현지인이 꼽은 최고의 먹거리 여행지' 에서 대한민국 229개 지방자치단체 중 여수시가 1위에 선정되어 식도락 여행에 최적화된 프로그램")
-            .themes(themes)
+                .themes(themes)
             .build();
         return this.programRepository.save(program);
     }
     private Theme givenTheme(String name) {
         return this.themeRepository.save(new Theme(name));
+    }
+
+    @Test
+    @DisplayName("프로그램 조회 수 랭킹 조회")
+    public void pageByViewsTest() throws Exception {
+        Program program = givenProgram(Set.of(givenTheme("식도락여행"),givenTheme("즐거운여행")));
+        this.mockMvc.perform(get("/api/programs/{id}", program.getId()));
+        this.mockMvc.perform(get("/api/programs/rank"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$..id").isNotEmpty())
+                .andExpect(jsonPath("$..name").value("여수 10미 먹거리"))
+                .andExpect(jsonPath("$..introduction").value("여수시 일대 게장백반, 돌산갓김치등"))
+                .andExpect(jsonPath("$..introductionDetail").value("여행자와 현지인이 꼽은 최고의 먹거리 여행지' 에서 대한민국 229개 지방자치단체 중 여수시가 1위에 선정되어 식도락 여행에 최적화된 프로그램"))
+                .andExpect(jsonPath("$..region").value("전라남도 여수시"))
+                .andExpect(jsonPath("$..themeName").value("즐거운여행, 식도락여행"))
+                .andExpect(jsonPath("$..view").value("1"))
+                .andExpect(jsonPath("totalElements").value("1"));
     }
 }

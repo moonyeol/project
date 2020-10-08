@@ -33,13 +33,13 @@ class ProgramRepositoryTest {
     @DisplayName("프로그램이 여러건일때 테스트")
     public void findByPageTest() {
         //given
-        IntStream.range(0, 20).forEach(i -> {
+        IntStream.range(0, 2).forEach(i -> {
                 Program program = Program.builder()
                     .name("name")
                     .introduction("introduction")
                     .introductionDetail("introductionDetail")
                     .region("region")
-                    .themes(Set.of(new Theme("theme" + i)))
+                    .themes(i==0?Set.of(new Theme("theme"+i)):Set.of(new Theme("theme"+i),new Theme("222") ))
                     .build();
 
                 testEntityManager.persist(program);
@@ -58,6 +58,7 @@ class ProgramRepositoryTest {
                 then(programViewDto.getIntroduction()).isEqualTo("introduction");
                 then(programViewDto.getIntroductionDetail()).isEqualTo("introductionDetail");
                 then(programViewDto.getRegion()).isEqualTo("region");
+                then(programViewDto.getThemeName()).contains("theme");
             }
         );
 

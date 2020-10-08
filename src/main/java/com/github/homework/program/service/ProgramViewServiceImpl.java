@@ -1,6 +1,7 @@
 package com.github.homework.program.service;
 
 import com.github.homework.program.domain.Program;
+import com.github.homework.program.exception.ProgramNotFoundException;
 import com.github.homework.program.model.ProgramViewDto;
 import com.github.homework.program.repository.ProgramRepository;
 import com.github.homework.theme.domain.Theme;
@@ -21,17 +22,15 @@ public class ProgramViewServiceImpl implements ProgramViewService {
     private final ProgramRepository programRepository;
 
     @Override
-    @Transactional
     public Optional<ProgramViewDto> getBy(Long id) {
-        Optional<Program> byId = programRepository.findById(id);
-        return byId.map(p ->
+        return programRepository.findById(id).map(p ->
             new ProgramViewDto(
                 p.getId(),
                 p.getName(),
                 p.getIntroduction(),
                 p.getIntroductionDetail(),
                 p.getRegion(),
-                p.getThemes()//추가
+                p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", "))
             )
         );
     }
@@ -40,4 +39,13 @@ public class ProgramViewServiceImpl implements ProgramViewService {
     public Page<ProgramViewDto> pageBy(Pageable pageable) {
         return programRepository.findBy(pageable);
     }
+
+    @Override
+    @Transactional
+    public void updateViews(Long id) throws ProgramNotFoundException  {
+        Program program = this.programRepository.findById(id).orElseThrow(
+                ProgramNotFoundException::new);
+        program.updateViews();
+    }
+
 }

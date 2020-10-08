@@ -6,6 +6,8 @@ import com.github.homework.program.model.ProgramViewDto;
 import com.github.homework.program.model.SimpleResponse;
 import com.github.homework.program.service.ProgramSaveService;
 import com.github.homework.program.service.ProgramViewService;
+
+import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +40,9 @@ public class ProgramController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProgramViewDto> getBy(@PathVariable Long id) {
+    public ResponseEntity<ProgramViewDto> getBy(@PathVariable Long id) throws ProgramNotFoundException {
         Optional<ProgramViewDto> programViewDto = this.programViewService.getBy(id);
+        this.programViewService.updateViews(id);
         return programViewDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
@@ -60,5 +63,16 @@ public class ProgramController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(new SimpleResponse(true, "수정 성공"));
+    }
+
+    @GetMapping("/rank")
+    public ResponseEntity<List<ProgramViewDto>> pageByViews(
+            @PageableDefault(sort = "views", direction = Sort.Direction.DESC, size = 10)
+                    Pageable pageable) {
+        List<ProgramViewDto> temp = this.programViewService.pageBy(pageable).getContent();
+        if(temp.size() >10){
+            temp = temp.subList(0,10);
+        }
+        return ResponseEntity.ok(temp);
     }
 }

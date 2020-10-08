@@ -38,6 +38,7 @@ public class Program {
     private String introduction;
     private String region;
     private String introductionDetail;
+    private int views;
 
     @OneToMany(mappedBy = "program", cascade = CascadeType.ALL)
     private Set<Theme> themes = new HashSet<>();
@@ -50,6 +51,7 @@ public class Program {
         this.region = region;
         this.themes.addAll(themes);
         themes.forEach(theme -> theme.setProgram(this));
+        this.views = 0;
     }
 
     public void updateProgram(String name, String introduction, String introductionDetail, String region,
@@ -60,5 +62,9 @@ public class Program {
         this.region = region;
         this.themes.retainAll(themes);
         themes.forEach(theme -> theme.setProgram(this));
+    }
+
+    public void updateViews(){
+        this.views++;
     }
 }
