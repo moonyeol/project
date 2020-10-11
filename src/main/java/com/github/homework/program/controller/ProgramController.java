@@ -42,7 +42,6 @@ public class ProgramController {
     @GetMapping("/{id}")
     public ResponseEntity<ProgramViewDto> getBy(@PathVariable Long id) throws ProgramNotFoundException {
         Optional<ProgramViewDto> programViewDto = this.programViewService.getBy(id);
-        this.programViewService.updateViews(id);
         return programViewDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
@@ -66,13 +65,7 @@ public class ProgramController {
     }
 
     @GetMapping("/rank")
-    public ResponseEntity<List<ProgramViewDto>> pageByViews(
-            @PageableDefault(sort = "views", direction = Sort.Direction.DESC, size = 10)
-                    Pageable pageable) {
-        List<ProgramViewDto> temp = this.programViewService.pageBy(pageable).getContent();
-        if(temp.size() >10){
-            temp = temp.subList(0,10);
-        }
-        return ResponseEntity.ok(temp);
+    public ResponseEntity<List<ProgramViewDto>> pageByViews(){
+        return ResponseEntity.ok(this.programViewService.getRank());
     }
 }

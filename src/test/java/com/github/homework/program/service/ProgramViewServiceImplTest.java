@@ -63,7 +63,7 @@ class ProgramViewServiceImplTest {
     void pageByTest() {
         //given
         ProgramViewDto programViewDto = new ProgramViewDto(1L, "name", "introduction", "introductionDetail", "region",
-                "theme");
+                "theme",1);
         given(this.programRepository.findBy(PageRequest.of(0, 100)))
                 .willReturn(
                         new PageImpl<>(List.of(programViewDto, programViewDto))

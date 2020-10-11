@@ -17,14 +17,16 @@ public class ProgramViewDto {
     private String introductionDetail;
     private String region;
     private String themeName;
+    private int views;
 
     public ProgramViewDto(Long id, String name, String introduction, String introductionDetail, String region,
-       String themeName) {
+       String themeName,int views) {
         this.id = id;
         this.name = name;
         this.introduction = introduction;
         this.introductionDetail = introductionDetail;
         this.region = region;
         this.themeName = themeName;
+        this.views = views;
     }
 }

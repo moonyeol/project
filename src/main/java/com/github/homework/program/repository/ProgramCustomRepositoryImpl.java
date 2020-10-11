@@ -40,8 +40,17 @@ public class ProgramCustomRepositoryImpl extends QuerydslRepositorySupport imple
                         p.getIntroduction(),
                         p.getIntroductionDetail(),
                         p.getRegion(),
-                        p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", "))))
+                        p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", ")),
+                        p.getViews())
+                        )
                 .collect(Collectors.toList());
         return PageableExecutionUtils.getPage(collect, pageable, query::fetchCount);
     }
+
+    @Override
+    public List<Program> getRank() {
+        return null;
+    }
+
+
 }

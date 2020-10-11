@@ -5,32 +5,38 @@ import com.github.homework.program.exception.ProgramNotFoundException;
 import com.github.homework.program.model.ProgramViewDto;
 import com.github.homework.program.repository.ProgramRepository;
 import com.github.homework.theme.domain.Theme;
+
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class ProgramViewServiceImpl implements ProgramViewService {
 
     private final ProgramRepository programRepository;
 
     @Override
     public Optional<ProgramViewDto> getBy(Long id) {
-        return programRepository.findById(id).map(p ->
+        Optional<Program> program = programRepository.findById(id);
+        program.get().updateViews();
+        return program.map(p ->
             new ProgramViewDto(
                 p.getId(),
                 p.getName(),
                 p.getIntroduction(),
                 p.getIntroductionDetail(),
                 p.getRegion(),
-                p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", "))
+                p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", ")),
+                p.getViews()
             )
         );
     }
@@ -41,11 +47,22 @@ public class ProgramViewServiceImpl implements ProgramViewService {
     }
 
     @Override
-    @Transactional
-    public void updateViews(Long id) throws ProgramNotFoundException  {
-        Program program = this.programRepository.findById(id).orElseThrow(
-                ProgramNotFoundException::new);
-        program.updateViews();
+    public List<ProgramViewDto> getRank(){
+        List<Program> programs = programRepository.getRank();
+        List<ProgramViewDto> programViewDtos = new LinkedList<ProgramViewDto>();
+        programs.forEach( p -> programViewDtos.add(
+                new ProgramViewDto(
+                        p.getId(),
+                        p.getName(),
+                        p.getIntroduction(),
+                        p.getIntroductionDetail(),
+                        p.getRegion(),
+                        p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", ")),
+                        p.getViews()
+                )
+                )
+        );
+        return programViewDtos;
     }
 
 }
