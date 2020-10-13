@@ -42,27 +42,20 @@ public class ProgramViewServiceImpl implements ProgramViewService {
     }
 
     @Override
+    public List<ProgramViewDto> getByName(String name) {
+        return programRepository.findByName(name);
+
+    }
+
+    @Override
     public Page<ProgramViewDto> pageBy(Pageable pageable) {
         return programRepository.findBy(pageable);
     }
 
     @Override
     public List<ProgramViewDto> getRank(){
-        List<Program> programs = programRepository.getRank();
-        List<ProgramViewDto> programViewDtos = new LinkedList<ProgramViewDto>();
-        programs.forEach( p -> programViewDtos.add(
-                new ProgramViewDto(
-                        p.getId(),
-                        p.getName(),
-                        p.getIntroduction(),
-                        p.getIntroductionDetail(),
-                        p.getRegion(),
-                        p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", ")),
-                        p.getViews()
-                )
-                )
-        );
-        return programViewDtos;
+        return programRepository.getRank();
+
     }
 
 }

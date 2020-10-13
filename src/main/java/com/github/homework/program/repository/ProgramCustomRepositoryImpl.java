@@ -48,8 +48,41 @@ public class ProgramCustomRepositoryImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public List<Program> getRank() {
-        return null;
+    public List<ProgramViewDto> getRank() {
+        return from(program)
+                .limit(10)
+                .join(program.themes, theme).fetchJoin()
+                .distinct()
+                .orderBy(program.views.desc()).fetch().stream().map(
+                        p-> new ProgramViewDto(
+                                p.getId(),
+                                p.getName(),
+                                p.getIntroduction(),
+                                p.getIntroductionDetail(),
+                                p.getRegion(),
+                                p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", ")),
+                                p.getViews()
+                        )
+                ).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProgramViewDto> findByName(String name) {
+        return from(program)
+                .where(program.name.eq(name))
+                .join(program.themes, theme).fetchJoin()
+                .distinct()
+                .fetch().stream().map(
+                        p-> new ProgramViewDto(
+                                p.getId(),
+                                p.getName(),
+                                p.getIntroduction(),
+                                p.getIntroductionDetail(),
+                                p.getRegion(),
+                                p.getThemes().stream().map(Theme::getName).collect(Collectors.joining(", ")),
+                                p.getViews()
+                        )
+                ).collect(Collectors.toList());
     }
 
 

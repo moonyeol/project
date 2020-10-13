@@ -13,6 +13,8 @@ public interface ProgramViewService {
 
     Optional<ProgramViewDto> getBy(Long id);
 
+    List<ProgramViewDto> getByName(String name);
+
     Page<ProgramViewDto> pageBy(Pageable pageable);
 
     List<ProgramViewDto> getRank();

@@ -68,4 +68,9 @@ public class ProgramController {
     public ResponseEntity<List<ProgramViewDto>> pageByViews(){
         return ResponseEntity.ok(this.programViewService.getRank());
     }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<List<ProgramViewDto>> getBy(@PathVariable String name) {
+        return ResponseEntity.ok(this.programViewService.getByName(name));
+    }
 }

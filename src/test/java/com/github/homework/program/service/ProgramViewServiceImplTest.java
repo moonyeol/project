@@ -84,4 +84,68 @@ class ProgramViewServiceImplTest {
         );
     }
 
+    @Test
+    @DisplayName("프로그램 이름으로 조회 일때")
+    void getByNameTest() {
+        //given
+        Program program = Program.builder()
+                .name("name")
+                .introduction("introduction")
+                .introductionDetail("introductionDetail")
+                .region("region")
+                .themes(Set.of(new Theme("theme"), new Theme("theme2")))
+                .build();
+
+        ProgramViewDto programViewDto = new ProgramViewDto(1L, "name", "introduction", "introductionDetail", "region",
+                "theme",0);
+
+        given(this.programRepository.findByName(program.getName())).willReturn( List.of(programViewDto));
+        //when
+        List<ProgramViewDto> listProgramViewDto = this.programViewService.getByName(program.getName());
+        //then
+        then(listProgramViewDto).hasSize(1);
+        then(listProgramViewDto).allSatisfy(p -> {
+                    then(p.getId()).isGreaterThan(0L);
+                    then(p.getName()).isEqualTo("name");
+                    then(p.getIntroduction()).isEqualTo("introduction");
+                    then(p.getIntroductionDetail()).isEqualTo("introductionDetail");
+                    then(p.getRegion()).isEqualTo("region");
+                    then(p.getThemeName()).isEqualTo("theme");
+                }
+        );
+
+    }
+
+    @Test
+    @DisplayName("조회수 순위 조회 일때")
+    void getRankTest() {
+        //given
+        Program program = Program.builder()
+                .name("name")
+                .introduction("introduction")
+                .introductionDetail("introductionDetail")
+                .region("region")
+                .themes(Set.of(new Theme("theme"), new Theme("theme2")))
+                .build();
+
+        ProgramViewDto programViewDto = new ProgramViewDto(1L, "name", "introduction", "introductionDetail", "region",
+                "theme",0);
+
+        given(this.programRepository.getRank()).willReturn( List.of(programViewDto));
+        //when
+        List<ProgramViewDto> listProgramViewDto = this.programViewService.getRank();
+        //then
+        then(listProgramViewDto).hasSize(1);
+        then(listProgramViewDto).allSatisfy(p -> {
+                    then(p.getId()).isGreaterThan(0L);
+                    then(p.getName()).isEqualTo("name");
+                    then(p.getIntroduction()).isEqualTo("introduction");
+                    then(p.getIntroductionDetail()).isEqualTo("introductionDetail");
+                    then(p.getRegion()).isEqualTo("region");
+                    then(p.getThemeName()).isEqualTo("theme");
+                }
+        );
+
+    }
+
 }
